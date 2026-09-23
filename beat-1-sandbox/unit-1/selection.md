@@ -1,86 +1,118 @@
 # Unit 1 — Issue Selection
 
-Path: `beat-1-sandbox/unit-1/selection.md`
+## Chosen Issue
 
-Record of the issue carried into Unit 2, and of the evaluation runs that produced
-`eval-run.txt`. This file is graded at the path above; a copy kept anywhere else in
-the repository is not read.
+Issue: https://github.com/codepath/pathreview-ai301-fa26-s1/issues/68
 
-Complete every labelled field below. Each is graded on its own; content placed under the
-wrong label is not graded.
+Verdict: accept
 
----
+## Why I Chose It
 
-## Selected issue
+I selected issue #68 because it passed every required check in my
+issue-selection rubric. The repository is actively maintained, the issue
+has a coherent and implementation-ready scope, there is no blocking
+linked pull request, and the repository does not prohibit AI-assisted
+contributions.
 
-**Issue link**
+The issue is also a good fit for my background because it is a bounded
+Python/RAG debugging task. The expected behavior is clearly described,
+the relevant implementation and test files are identified, and an
+existing regression test provides a concrete way to verify the fix.
 
-[The individual Path Review issue page. A link to the repository or the issue list
-does not satisfy this field.]
+I also evaluated issue #67, which was accepted by my rubric as a focused
+Python/API authorization bug. I chose #68 because its reproduction,
+implementation location, expected behavior, and regression-test path are
+more explicitly defined.
 
-**Verdict output**
+## Eval Iterations
 
-[Your skill's live-mode output for this issue, pasted verbatim and ending with the
-fenced JSON verdict block. A summary does not satisfy this field.]
+### Initial Full Eval
 
-**The verdict must record `accept` for this issue.** Choose an issue your own skill
-accepts. If your skill rejects every candidate you try, that is a signal about your
-rubric rather than about the issues: revise it and re-run — retries are unlimited and a
-partial re-run costs about $0.20 — or run the skill on different candidates. Output
-recording `reject` for the issue you chose earns no credit for this field.
+Provider: Codex  
+Model: gpt-5.6-luna
 
-```
-paste the output here, including the closing JSON block
-```
+Agreement: 16/20
 
----
+Disagreements:
+- issue-04
+- issue-15
+- issue-19
+- issue-20
 
-## Eval iterations
+My initial rubric used a single `scope-bounded` check. The evaluation
+showed that this check was too strict for some coherent issues while also
+failing to detect hidden implementation complexity in other issues.
 
-Quote source text directly in each field below. Paraphrase does not satisfy them.
+### Rubric Revision
 
-**Run history**
+I replaced the single scope check with two required checks:
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+- `scope-coherent`: determines whether the issue describes one coherent
+  problem or outcome while allowing multiple related causes or
+  implementation steps.
+- `implementation-ready`: determines whether implementation can begin
+  without unresolved product/design decisions, missing critical inputs,
+  or strong evidence of hidden complexity.
 
-**Issue analysis**
+I also clarified the `unclaimed` check so that old claims that were
+explicitly released or abandoned do not count as active claims.
 
-[One scored issue, identified by id (`issue-01` through `issue-20`; the `calib-`
-issues are not scored). State your rubric's decision, the gold label, and the
-reasoning that produced your rubric's result.]
+### Targeted Re-evaluation
 
-**Check rationale**
+I reran:
 
-[One check from the `rubric.md` uploaded to `tools/issue-select/`, quoted as it is
-currently written, with the reasoning behind its current form.]
+- issue-04
+- issue-15
+- issue-19
+- issue-20
 
-**Trade-offs**
+Result: 4/4 matched the gold labels.
 
-[What the quoted check gives up. Any one of these is a complete answer: an issue whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+### Final Full Eval
 
----
+Provider: Codex  
+Model: gpt-5.6-luna
 
-## Selection rationale
+Agreement: 19/20
 
-Graded on whether all three are answered, in your own words. Not on how good the
-reasoning is, and not on length — a short honest answer to each earns the full marks.
-This is also the basis for the claim comment you write in Unit 2.
+Category results:
 
-**Selection rationale**
+- claimed: 4/4
+- clear-accept: 7/8
+- dead-repo: 3/3
+- policy: 1/1
+- scope: 4/4
 
-[Answer all three:
+Result: PASS
 
-1. The issue's fit to your interests and to the time available.
-2. What the verdict identified correctly, and what you weighed that the rubric could
-   not.
-3. The anticipated difficulty in claiming it.]
+### Eval Environment Note
 
----
+The course evaluation harness was originally configured for Claude
+Sonnet. My Claude course credit was exhausted, so I performed my later
+rubric iterations and final evaluation using Codex with
+`gpt-5.6-luna`. I kept the provided issue snapshots, gold labels, skill
+instructions, and rubric evaluation logic unchanged.
 
-Related paths: `eval-run.txt` in this directory; your skill's files in
-`tools/issue-select/`.
+## Live Issue Evaluation
+
+### Issue #67
+
+URL: https://github.com/codepath/pathreview-ai301-fa26-s1/issues/67
+
+Verdict: accept
+
+The skill found that the repository was active, the issue represented a
+focused authorization bug, the implementation area was identifiable,
+and there was no blocking claim or contribution-policy issue.
+
+### Issue #68
+
+URL: https://github.com/codepath/pathreview-ai301-fa26-s1/issues/68
+
+Verdict: accept
+
+The skill found that the issue was a bounded Python/RAG bug with clearly
+defined expected behavior, named implementation and testing locations,
+and an existing regression test.
+
+I selected issue #68.
