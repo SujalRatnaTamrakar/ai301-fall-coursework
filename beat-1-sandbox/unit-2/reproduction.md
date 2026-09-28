@@ -65,6 +65,27 @@ result it changes, a canary you re-ran with `--only`, a case you accept it will 
 stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
 the point in full when the reason follows.]
 
+### Initial full eval
+
+Provider: Codex
+Model: gpt-5.6-luna
+
+Agreement: 17/20
+
+Disagreements:
+- pkg-05: gold `accept`, rubric `reject`
+- pkg-10: gold `accept`, rubric `reject`
+- pkg-16: gold `reject`, rubric `accept`
+
+Category results:
+- clear-accept: 6/8
+- disclosure: 1/1
+- no-evidence: 4/4
+- unfollowable-comms: 3/3
+- wrong-target: 3/4
+
+Result: below the 18/20 bar.
+
 ---
 
 Related paths: `eval-run.txt` in this directory; your skill's files in
