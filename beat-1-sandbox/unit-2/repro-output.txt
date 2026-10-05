@@ -1,0 +1,59 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+____________________ TestKeywordSearcher.test_empty_index _____________________
+
+self = <tests.unit.test_keyword_search.TestKeywordSearcher object at 0x00000204E710E150>
+searcher = <rag.retriever.keyword_search.KeywordSearcher object at 0x00000204E70A2CF0>
+
+    @pytest.mark.xfail(
+        strict=True,
+        reason="issue #68 (manifest H-01): BM25 keyword search raises ZeroDivisionError on an empty index",
+    )
+    def test_empty_index(self, searcher):
+        """Test searching on empty index."""
+>       searcher.index([])
+
+tests\unit\test_keyword_search.py:140: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+rag\retriever\keyword_search.py:25: in index
+    self.bm25 = BM25Okapi(tokenized_corpus)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\rank_bm25.py:83: in __init__
+    super().__init__(corpus, tokenizer)
+.venv\Lib\site-packages\rank_bm25.py:27: in __init__
+    nd = self._initialize(corpus)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <rank_bm25.BM25Okapi object at 0x00000204E70A2E40>, corpus = []
+
+    def _initialize(self, corpus):
+        nd = {}  # word -> number of documents with word
+        num_doc = 0
+        for document in corpus:
+            self.doc_len.append(len(document))
+            num_doc += len(document)
+    
+            frequencies = {}
+            for word in document:
+                if word not in frequencies:
+                    frequencies[word] = 0
+                frequencies[word] += 1
+            self.doc_freqs.append(frequencies)
+    
+            for word, freq in frequencies.items():
+                try:
+                    nd[word]+=1
+                except KeyError:
+                    nd[word] = 1
+    
+            self.corpus_size += 1
+    
+>       self.avgdl = num_doc / self.corpus_size
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ZeroDivisionError: division by zero
+
+.venv\Lib\site-packages\rank_bm25.py:52: ZeroDivisionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_keyword_search.py::TestKeywordSearcher::test_empty_index
+1 failed in 0.29s
