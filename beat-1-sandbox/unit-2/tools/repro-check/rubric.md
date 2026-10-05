@@ -1,79 +1,9 @@
-# Unit 2 — Claim and Reproduce
+# Rubric: is this reproduction package ready to post?
 
-Path: `beat-1-sandbox/unit-2/reproduction.md`
-
-Record of your claim and reproduction on the issue you chose in Unit 1, and of the
-evaluation runs that produced `eval-run.txt`. This file is graded at the path above; a copy
-kept anywhere else in the repository is not read.
-
-Complete every labelled field below. Each is graded on its own; content placed under the wrong
-label is not graded.
-
----
-
-## Your identity upstream
-
-**sujalratnatamrakar**
-
----
-
-## Posted upstream
-
-**Claim comment**
-
-[Link to the comment where you claimed the issue. Use the comment's own permalink, not the
-issue page on its own. **Then paste the text of that comment underneath the link** — the
-pasted text is what this field is graded on, so copy across what you actually posted.]
-
-**Reproduction comment**
-
-[Link to the comment where you posted your reproduction. It must record the environment
-(OS, relevant versions, code state), steps a stranger could follow, and what you observed.
-**Then paste the text of that comment underneath the link** — the pasted text is what this
-field is graded on, so copy across what you actually posted.]
-
-## Eval iterations
-
-Answer all four sections. Quote source text directly; paraphrase does not satisfy these
-fields.
-
-**Run history**
-
-1. Initial full run: 17/20.
-   Disagreements were pkg-05, pkg-10, and pkg-16.
-
-2. I revised `steps-rerunnable` and `environment-matches`.
-
-3. Targeted rerun of pkg-05, pkg-10, and pkg-16: 3/3 agreement.
-
-4. Because I loosened `steps-rerunnable`, I ran pkg-06, pkg-18, and
-   pkg-19 as `unfollowable-comms` canaries. The combined targeted run
-   produced 6/6 agreement.
-
-5. Confirming full run: __/20.
-
-### Package analysis
-
-Package: `pkg-10`
-
-My initial verdict: `reject`
-Gold verdict: `accept`
-
-My original `steps-rerunnable` check was too strict. pkg-10 honestly
-reported that the issue could not be reproduced on Linux + zsh and
-explicitly documented how that environment differed from the reported
-macOS + fish environment.
-
-The commands were sufficient for another contributor to repeat the same
-attempt and observe the same result. My original rule incorrectly treated
-"steps sufficient to reproduce the attempted test" as "steps that must
-successfully reproduce the original bug."
-
-I changed the rule so that an evidenced cannot-reproduce can pass when
-another contributor can repeat the documented attempt and verify the
-reported outcome.
-
-**Check rationale**
+<!--
+THIS IS THE PART YOU WRITE. The skill in SKILL.md executes whatever
+checks you define here. It ships empty on purpose: the judgment is your
+work.
 
 A filled rubric must contain:
 
@@ -125,44 +55,3 @@ Accept only if every required check passes. A required check graded unclear
 counts as fail and the package is rejected. An honest cannot-reproduce can
 still be accepted when its environment, steps, observed behavior, and
 supporting evidence satisfy the required checks.
-
-### Trade-offs
-
-Loosening `steps-rerunnable` risks accepting reports that leave out
-information another contributor actually needs.
-
-To test that trade-off, I reran the three `unfollowable-comms` packages
-that my initial rubric had correctly rejected: pkg-06, pkg-18, and pkg-19.
-
-All three remained rejected after the revision. The complete targeted run
-of pkg-05, pkg-06, pkg-10, pkg-16, pkg-18, and pkg-19 matched the gold
-labels 6/6.
-
-This gave me evidence that the revision removed unnecessary strictness
-without allowing the known unfollowable reports to pass.
-
-### Initial full eval
-
-Provider: Codex
-Model: gpt-5.6-luna
-
-Agreement: 17/20
-
-Disagreements:
-- pkg-05: gold `accept`, rubric `reject`
-- pkg-10: gold `accept`, rubric `reject`
-- pkg-16: gold `reject`, rubric `accept`
-
-Category results:
-- clear-accept: 6/8
-- disclosure: 1/1
-- no-evidence: 4/4
-- unfollowable-comms: 3/3
-- wrong-target: 3/4
-
-Result: below the 18/20 bar.
-
----
-
-Related paths: `eval-run.txt` in this directory; your skill's files in
-`tools/repro-check/`.
