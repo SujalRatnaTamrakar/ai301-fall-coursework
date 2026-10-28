@@ -125,7 +125,7 @@ fields.
    pkg-19 as `unfollowable-comms` canaries. The combined targeted run
    produced 6/6 agreement.
 
-5. Confirming full run: __/20.
+5. Confirming full run: 20/20.
 
 ### Package analysis
 
@@ -150,39 +150,21 @@ reported outcome.
 
 **Check rationale**
 
-A filled rubric must contain:
+I loosened `steps-rerunnable` because my original wording treated
+"steps sufficient to reproduce the attempted test" as "steps that must
+successfully reproduce the original bug." pkg-10 showed why that is
+wrong: it honestly reported a cannot-reproduce, documented how its
+environment differed from the reported one, and gave commands a stranger
+could repeat to observe the same result. The current wording below
+therefore passes an evidenced cannot-reproduce when the documented
+attempt can be repeated and the reported outcome verified. The risk is
+accepting reports that leave out information another contributor
+actually needs, so I canary-reran pkg-06, pkg-18, and pkg-19 — the
+`unfollowable-comms` packages my initial rubric had correctly rejected —
+and all three remained rejected (targeted run 6/6, see Trade-offs).
 
-1. At least one row in the checks table. Each row needs all four
-   columns:
-   - Check: a short name (used in the output JSON).
-   - Evidence: exactly what to look at, and where in the package. Name
-     the part (the claim comment, the repro report's environment
-     record, the artifacts read against the issue's description, the
-     repo-facts block) or a location from your
-     references/evidence-guide.md. "The report" is not a source; "the
-     output excerpt read against the error the issue describes" is.
-   - Pass condition: a decision rule about the OUTCOME that someone
-     else could apply and get your answer. Judge the thing itself (does
-     the artifact show the issue's behavior?), never the write-up's
-     shape (how many steps it has, how long it is, whether it uses a
-     template's headings). Structure-shaped checks are what make
-     graders disagree with themselves.
-   - Weight: `required` (a fail here holds the package) or `preferred`
-     (never changes the verdict).
-
-2. A verdict rule below the table: how the check grades combine into
-   accept (ready) or reject (hold), including how `unclear` is
-   treated. The verdict space is binary. If you write no rule for
-   `unclear`, the skill treats it as fail.
-
-Cover what actually gets bad packages posted. The lecture named the
-proof families: the environment is recorded, the steps are complete
-and followable, the behavior shown matches the issue (not an adjacent
-one), the outcome is stated honestly (an evidenced cannot-reproduce is
-a pass, a confident wrong-target is not), and the words respect the
-repo's conventions. A rubric that ignores a family will fail eval
-packages designed around that family.
--->
+The checks table and verdict rule below are quoted exactly from my
+uploaded rubric in `tools/repro-check/rubric.md`.
 
 ## Checks
 
