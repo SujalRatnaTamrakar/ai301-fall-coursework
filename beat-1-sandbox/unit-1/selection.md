@@ -24,6 +24,25 @@ Python/API authorization bug. I chose #68 because its reproduction,
 implementation location, expected behavior, and regression-test path are
 more explicitly defined.
 
+**Claiming difficulty I anticipated**
+
+I anticipated two difficulties in claiming #68. First, it sits in a
+shared course repository that the whole section selects from, and it was
+one of the most clearly scoped issues in the pool. My `unclaimed` check
+was only a snapshot at evaluation time, not a reservation: while I
+weighed #67 against #68, another student could have claimed #68 first,
+and the selection work would have had to restart from a weaker pick.
+
+Second, claiming was a public commitment made before reproduction. The
+claim comment promised a local reproduction with the environment, the
+exact steps, and the observed output, at a point when I did not yet know
+whether `KeywordSearcher.index([])` would reproduce on my Windows setup.
+If it had not reproduced, I would have had to post that honestly and
+release the issue. I claimed it anyway because the downside was bounded:
+the existing `test_empty_index`, already marked as a strict xfail for
+this issue, gave me a concrete first check to run, so a cannot-reproduce
+result would have shown up quickly rather than after days of work.
+
 ## Eval Iterations
 
 ### Initial Full Eval
@@ -57,6 +76,18 @@ I replaced the single scope check with two required checks:
 I also clarified the `unclaimed` check so that old claims that were
 explicitly released or abandoned do not count as active claims.
 
+The two replacement checks, quoted word-for-word from the rubric now
+uploaded at `tools/issue-select/rubric.md` (the summaries above are my
+paraphrase; these are the current wording the skill actually executes):
+
+> `scope-coherent` — Evidence: `Issue title, issue body, and maintainer comments` — Pass condition: `The issue describes one coherent problem or outcome that a contributor can work toward. Multiple related substeps, causes, or implementation suggestions are allowed when they all address the same outcome. Exhaustive acceptance criteria are not required.` — Weight: `required`
+
+> `implementation-ready` — Evidence: `Issue body, maintainer comments, prior claim/PR history, and unresolved TODO/TBD items` — Pass condition: `The issue contains enough information to begin implementation without first resolving a major product/design decision or obtaining a missing critical input. Fail if required behavior, assets, APIs, or design decisions are still explicitly TBD, or if repeated abandoned implementations/closed unmerged PRs provide strong evidence that the issue has substantial hidden complexity for a first contribution.` — Weight: `required`
+
+And the verdict rule it feeds, also quoted verbatim:
+
+> Accept only if every required check passes. A required check graded unclear counts as a failure and the issue is rejected. Preferred checks never change an accept/reject verdict; they are used only to rank issues that have already passed all required checks.
+
 ### Targeted Re-evaluation
 
 I reran:
@@ -84,6 +115,36 @@ Category results:
 - scope: 4/4
 
 Result: PASS
+
+### Issue Analysis
+
+Issue: `issue-04` (category: clear-accept)
+
+- **Gold label:** `accept`
+- **My rubric's verdict in the committed final run:** `reject`
+- **Failed check:** `implementation-ready`
+- **Agreement in `eval-run.txt`:** `NO`
+
+In the committed final run, `issue-04` is the single disagreement behind
+the 19/20 agreement line: every other issue, including the other three
+initial disagreements (issue-15, issue-19, issue-20), agrees with gold.
+My revised `implementation-ready` check still graded this clear-accept
+issue more strictly than the gold label did, failing it where gold
+accepts it. That is the revised rubric's known remaining weakness, and
+it is the same check quoted verbatim in the Rubric Revision section
+above.
+
+One inconsistency between this write-up and the committed record, stated
+explicitly rather than smoothed over: the Targeted Re-evaluation section
+above reports 4/4 agreement on issue-04, issue-15, issue-19, and
+issue-20, but the harness-written `eval-run.txt` from the final full run
+still shows `issue-04` as a disagreement. Both records stand as they
+were produced: the targeted re-run passed all four issues in isolation,
+and the later full run flipped `issue-04` back to `reject`. I did not
+edit either number to make them agree; the difference is run-to-run
+variation between the targeted and full evaluations under the same
+rubric, and the committed full run — the artifact of record — is the
+19/20 one.
 
 ### Eval Environment Note
 
