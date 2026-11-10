@@ -11,7 +11,7 @@ files and no evidence uploads are part of Assignment 5.
 **Student:** Sujal Ratna Tamrakar
 **GitHub Username:** SujalRatnaTamrakar
 **Issue:** https://github.com/openedx/edx-ora2/issues/2250
-**Pull Request:** Not yet opened. The draft PR is Unit 7 work; this line gets the link the day it opens.
+**Pull Request:** https://github.com/openedx/edx-ora2/pull/2483 (draft, opened 2026-11-09)
 
 One repository, built across units 5 to 8, telling the whole story of your real
 contribution. Fill it as you work, not at the end — the sections below ask for evidence that
@@ -62,10 +62,9 @@ I installed the scout as the starter directs: the staff SKILL.md and the real-wo
 
 This week's tool work was repo familiarization plus baseline evidence. I cloned edx-ora2, installed it into a virtualenv with its test dependency group, and ran the three test files that exercise the enhanced_staff_grader flag: 241 tests pass on the unmodified code (108 in test_config_mixin.py, 133 across test_staff_area.py and test_openassessment.py), which is the before picture the removal has to preserve. One honest gap: the Unit 6 voice-guard install (the starter's checker plus hook for outgoing posts) is not done yet. My two claim comments went out through the browser before the guard was in place, so they never got its draft check; the catch-up is to run the guard's draft check on my next upstream post, starting with the Unit 7 PR description, and to say so here rather than pretend the check ran.
 
-**Unit 7: [one line on the tool work]**
+**Unit 7: Removed the flag on a real branch, ran the ship-gate, and opened the draft PR**
 
-[2-4 sentences: the ship-gate and your gate manifest. What it produced
-on your real branch, what fought you, what changed because of it.]
+The week's tool work was the build itself plus the gate I ran before anything went upstream: the three flag test suites, the full Python suite run twice (my branch and, stashed, unmodified master), and a tree-wide reference search as the ship/no-ship check. The gate earned its keep twice. The full-suite comparison is what let me say the 408 failures in this environment are pre-existing rather than mine, and the reference search caught a second JavaScript consumer of the flag (`StaffCell.shouldShowLink`) that my first edit had left dangling. What fought me was plumbing, not code: the GitHub app connection could not write to my new forks until the two fork repositories were added to its installation, and the PR itself had to be opened from the browser because the connection cannot create PRs on the upstream repo.
 
 **Unit 8: [one line on the tool work]**
 
@@ -204,38 +203,40 @@ built, decisions you made when you made them, wrong turns included.]
 
 Claimed the issue (comment linked in Why I Chose This Issue), forked the repo, stood it up locally, and ran the baseline: 241 tests passing across the three files that exercise the flag. Mapped every `enhanced_staff_grader` reference in the tree and wrote the removal plan against the current `src/` layout. No upstream code changed yet; the removal itself is Unit 7.
 
+**2026-11-09 (Unit 7 build)**
+
+Implemented the removal on branch `remove-enhanced-staff-grader-flag` in my fork, following the plan: flag constant, registry entry, and property deleted from config_mixin.py; staff-area context no longer sets the flag; the template now keys on team assignment and the grader URL, with the demo block deleted; the listing view no longer passes the flag to JavaScript. Two findings during the build. First, the JavaScript had a second consumer I had not planned for: `StaffCell.shouldShowLink` in the course listing used the flag to decide when the legacy staff link renders; it now keys on team assignments only, and the listing spec's two flag branches collapsed into the single surviving behavior. Second, my first fixtures edit parsed templates.json as JSON and silently collapsed a duplicate key; I caught it in the diff, reverted, and removed the two flag keys with a surgical text edit instead (final fixtures diff: two lines). A peer-review pass over the production diff also caught a dangling `esgEnabled` reference left by my first JS edit and a doubled blank line in config_mixin.py; both fixed before pushing. Two suggestions I considered and declined, with reasons: regenerating the compiled `dist/` bundle by hand (it is a build artifact; the PR description flags it for the maintainers instead), and keeping the deleted property as a deprecated alias (the ticket asks for removal, and the maintainers' own TODO says remove).
+
+Testing, before and after: the three flag suites pass 212 tests with the change (241 before; the 29 difference is exactly the deleted flag-parameterized cases). The full Python suite in this environment shows 408 failed / 1,377 passed with the change against 408 failed / 1,406 passed on unmodified master, an identical failure set, so the change introduces no new failures here. The karma JS suite could not run in this environment (no Node toolchain for the repo); both edited JS files pass a syntax check, and the PR description says so plainly for the maintainers.
+
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: The branch build itself, checked by the ship-gate described in the Unit 7 entry: targeted suites, a full-suite before/after comparison, and a tree-wide reference search.
+- What it produced: A ten-file diff (18 insertions, 138 deletions) that removes the flag everywhere it lived, with test evidence recorded per step.
+- Difficulties: A second JS consumer hidden behind the first edit, a fixtures file that punishes JSON round-trips, and fork write access that needed the GitHub app's repo list extended before anything could be pushed.
+- What changed: The plan gained a step (StaffCell and the listing spec), the fixtures edit changed technique (surgical text edit, verified as a two-line diff), and every catch is written down in the notes instead of being silently absorbed.
 
 ---
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when opened]
+**PR Link:** https://github.com/openedx/edx-ora2/pull/2483
 
-**PR Description:** [what the PR says; much of the content above
-adapts into it]
+**PR Description:** The PR keeps the repository's own template and adds three sections under it. The Summary states what the removal in #2250 does and the end-state behavior: non-team assignments with the grading microfrontend URL configured get the enhanced grader link directly, team assignments keep the legacy grader, and the listing's staff-grader column always says "View and grade responses". Changes walks the ten files one by one. Testing records the evidence in full: 241 baseline tests in the three flag suites against 212 after (the 29 difference is exactly the deleted flag-parameterized cases), the full-suite comparison (408 failures on both unmodified master and my branch in this environment, an identical set), the tree-wide reference search, and the honest limits: the karma JS suite could not run in my environment, and the compiled `dist/` bundle still holds the old string because it is a build artifact, flagged in the description with an offer to regenerate it.
 
 **Maintainer Feedback:**
 
-- [Date]: [feedback received, or "none yet"; silence is a normal
-  state and costs you nothing]
-- [Date]: [how you addressed it]
+- 2026-11-09: None yet. The only activity on the PR so far is the automated Open edX welcome comment, which notes that a signed contributor agreement (CLA) is required before the PR can merge; that is an account step I still need to complete outside this story.
+- 2026-11-09: Nothing to address yet; the PR monitor in Unit 8 is the mechanism that watches for the first real feedback.
 
-**Status:** [Awaiting review / Iterating / Merged / Closed. The
-status is a fact you record, never a grade: the PR is graded as
-opened.]
+**Status:** Draft, awaiting review. (The PR is graded as opened; the draft state and the pending CLA are recorded here as facts, not as blockers to the submission.)
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: The browser-based PR creation on my fork's branch, after the connector path failed (the GitHub connection cannot create pull requests on the upstream repository). Draft state chosen deliberately.
+- What it produced: Draft PR #2483 against openedx/edx-ora2 master, 1 commit, 10 files changed (+18 / -138), linked to #2250 by the "Fixes #2250" line, with the repo template retained.
+- Difficulties: Getting write access to the fork in the first place (the app's repository list had to be extended to include the forks), and a creation path that split across two tools: push by connector, PR by browser.
+- What changed: Verification habit: the PR's existence, draft state, title, and diff size were confirmed on the live PR page after creation, not taken from the creation flow's own report.
 
 ---
 
