@@ -66,10 +66,9 @@ This week's tool work was repo familiarization plus baseline evidence. I cloned 
 
 The week's tool work was the build itself plus the gate I ran before anything went upstream: the three flag test suites, the full Python suite run twice (my branch and, stashed, unmodified master), and a tree-wide reference search as the ship/no-ship check. The gate earned its keep twice. The full-suite comparison is what let me say the 408 failures in this environment are pre-existing rather than mine, and the reference search caught a second JavaScript consumer of the flag (`StaffCell.shouldShowLink`) that my first edit had left dangling. What fought me was plumbing, not code: the GitHub app connection could not write to my new forks until the two fork repositories were added to its installation, and the PR itself had to be opened from the browser because the connection cannot create PRs on the upstream repo.
 
-**Unit 8: [one line on the tool work]**
+**Unit 8: Wrote a PR playbook, ran the monitor on the live PR, and let the playbook make the call**
 
-[2-4 sentences: the PR-monitor and your playbook. What it read, what it
-drafted, what you did with the draft.]
+The week's tool work was the pr-monitor: a playbook I wrote for PR #2483 (check cadence, and a decision for each signal: my-own-code CI failure, baseline-matching failure, reviewer comment, CLA state, silence) plus a first real monitoring run against the live PR. The run read the PR's state, reviews, comments, and checks: draft and open, zero reviews, one automated welcome comment carrying a CLA requirement, and workflow runs that "completed with no jobs", so CI is unexercised rather than failing. The playbook's decision on that evidence was WAIT, no ping, no edits, with the CLA signature and the not-yet-run CI logged as watch items and the next check set for 2026-11-12. The monitor output and the playbook are saved alongside this story (`pr-monitor-output.md`, `pr-monitor-playbook.md`). What the tool changed: instead of a vague "check the PR sometime", the follow-up now has dated thresholds, including the 14-day mark before a polite ping is even allowed.
 
 ---
 
@@ -244,28 +243,39 @@ Testing, before and after: the three flag suites pass 212 tests with the change 
 
 **Technical Skills Gained**
 
-[What you learned technically, named concretely.]
+- Feature-flag archaeology in a production Django/XBlock codebase: how one waffle flag fans out through a config mixin, a template conditional, a staff-area context dict, a JavaScript context payload, and two separate JS consumers, and how to remove it so the surviving behavior is the intended default rather than an accident.
+- Before/after test discipline: baselining the exact suites a change touches (241 tests), then proving a full-suite failure set is pre-existing by running the same 1,800-test suite on stashed, unmodified code and comparing counts (408 failures on both sides; the 29-test pass difference was exactly the deleted flag cases).
+- Server-side scoping in a Next.js API route: passing the OpenCue job search's `shows` filter into GetJobs instead of filtering on the client, and wiring a persisted (localStorage) single-show selection through a React page's load, refresh, and auto-refresh paths without double-fetching or racing the scope resolution.
+- Verification habits for agent-assisted work: confirming claims, forks, pushes, and PRs through independent reads afterwards, because two tool reports in this project were wrong in opposite directions.
 
 **Challenges Overcome**
 
-[What was hard and how you solved it; point at the real events, the
-Toolkit blocks above are full of them.]
+- My scout's first picks were already implemented by open PRs I had never searched for. Fixing that took a rubric patch (PR search plus timeline read as the `unclaimed` evidence), releasing a site claim, and re-screening every candidate; four more issues died on the corrected gate before the two real picks survived it.
+- A fixtures file that punishes the obvious edit: parsing templates.json as JSON and re-dumping it silently collapsed a duplicate key and changed unrelated values. I caught it only by reading the diff, reverted, and redid the edit as a surgical text change that produced a two-line diff.
+- Plumbing, repeatedly: the GitHub connection could not write to new forks until they were added to its installation, could not create the upstream PR at all (browser did it), and hit a moto version pin that masqueraded as five broken test modules until I matched the environment to the repo's lockfile.
+- The karma JS suite and a live Cuebot backend were both unavailable in my environment. The honest handling was to say exactly that in both PR descriptions, verify the JS by typecheck (CueWeb) and syntax check (edx-ora2), and let CI be the final word instead of claiming runs that never happened.
 
 **What I'd Do Differently Next Time**
 
-[Reflection on your process.]
+- Run the corrected unclaimed gate (PR search first, timeline second) before grading anything else. It is the cheapest check in the rubric and the one whose absence cost the most rework.
+- Read the diff of every generated edit before moving on, especially machine-produced file rewrites; the templates.json corruption was invisible until the diff was read line by line.
+- Set up the full toolchain (Node for karma, the repo's locked dependency versions) before the build week, not during it; two of my honest-limit notes in the PRs trace back to environment gaps I could have closed in Unit 6.
+- Baseline the FULL suite, not just the touched files, before making changes. The touched-file baseline was enough this time only because I ran the full comparison before opening the PR.
+
+**What's Next**
+
+- Watch PR #2483 under the playbook: sign the Open edX CLA, respond to the first maintainer feedback when it lands, and mark the PR ready for review once its steps are complete; the OpenCue change gets the same monitoring once I have tested it and opened its PR.
+- Keep contributing in both projects at a smaller cadence: edx-ora2 has a steady stream of deprecation tickets shaped like #2250, and OpenCue's CueWeb has more pages with the same all-shows shape this fix removed from Stuck Frames.
 
 ---
 
 ## Resources Used
 
-[What actually helped, not a reading list. List things this story
-already shows you using: the doc you followed to set the environment
-up, the thread that explained the bug, the person who answered you.
-One real entry beats ten plausible ones.]
-
-- [Link to documentation that helped]
-- [Discussion, issue, or post that helped]
+- The two issue threads themselves: openedx/edx-ora2#2250 (its checklist named every pre-2025 code location, and maintainer kdmccormick's October 29 comment confirmed the code was dead and removable) and AcademySoftwareFoundation/OpenCue#2540 (exact files, expected behavior, and the docs/screenshot list).
+- My own Beat 1 toolkit: the Unit 1 issue-select skill (rubric, scope, evidence guide) became the Unit 5 scout by overlay, and its eval-run record is what the scout's verdicts were checked against.
+- The edx-ora2 repository's own test configuration: pytest.ini plus the test dependency group in pyproject.toml, and the uv.lock version pins that resolved the moto incompatibility in my environment.
+- The OpenCue docs pages listed in #2540 (user guide, CueWeb reference, system guide), which doubled as the spec for where the documentation updates belonged.
+- CodePath's Unit 5 through Unit 8 portal instructions, which fixed the story's structure and the weekly sequence this document follows.
 
 ---
 
@@ -275,7 +285,7 @@ One real entry beats ten plausible ones.]
 **Student:** Sujal Ratna Tamrakar
 **GitHub Username:** SujalRatnaTamrakar
 **Issue:** https://github.com/AcademySoftwareFoundation/OpenCue/issues/2540
-**Pull Request:** Not yet opened. Claimed 2026-11-09; the build follows the edx-ora2 contribution above.
+**Pull Request:** Not yet opened, at my direction. The branch is pushed to my fork (`scope-stuck-frames-to-show`) and I will open the PR myself after I have tested the change; the course story records the work, the tests run here stand as the pre-PR evidence.
 
 ## Why I Chose This Issue
 
@@ -303,6 +313,18 @@ The API route (`cueweb/app/api/stuck-frames/route.ts`, 163 lines) lists unfinish
 
 `cueweb/app/stuck-frames/page.tsx` (selector UI, persisted selection, filtering), `cueweb/app/api/stuck-frames/route.ts` (show-scoped query), plus the CueWeb docs pages and screenshots the issue lists.
 
+## Reproduction and Plan
+
+The "reproduction" here is the behavior the issue describes, confirmed by reading the code end to end: the route's POST handler lists unfinished jobs with no show filter (`{ r: { include_finished: false } }`), fans out per job for frames and layers, and the page renders whatever it receives; neither file mentions a show selection anywhere. The fix plan follows the shape the codebase already uses elsewhere: the job search criteria already accept a `shows` list (see `getJobsForShowShot` in `app/utils/get_utils.ts`), and the page already persists its filter settings to localStorage, so the selected show persists the same way (`cueweb.stuck-frames.show`), resolves from the active shows (`getActiveShows()`), and scopes the request rather than filtering results after the fact.
+
+## Implementation Notes
+
+**2026-11-09 (Unit 8 build)**
+
+Implemented on branch `scope-stuck-frames-to-show` in my fork, six files. The page gains a Show selector in its header listing the active shows plus an explicit **All shows** opt-in; a mount-time resolver picks the persisted selection when it is still an active show (or the saved opt-in), otherwise the first active show, and with no active shows at all it falls back to the farm-wide scan so the page still works. Loads wait for that resolution so the first fetch is already scoped, changing shows resets the hidden rows and log lines from the previous show's scan, and the empty-state and count lines name the selected show. The route accepts an optional `{ show }` body and passes `shows: [show]` into GetJobs; no show in the body keeps the old all-shows behavior for the opt-in. `getStuckFrames(show?)` forwards the selection. Docs updated in the three places that described the old behavior: the user guide's Stuck Frames section, the CueWeb reference (a new "Show scope" row and the corrected data-source row), and the system guide's page list.
+
+Verification: `npx tsc --noEmit` across cueweb is clean, and the full jest suite gives identical results before and after the change (280 passed / 9 failed on both runs; the 9 failures are pre-existing on unmodified master in this environment). Two honest limits, both stated in the PR: the page was not exercised against a live Cuebot/REST gateway in my environment, and the docs screenshots were not refreshed for the same reason — the docs text is updated, and the screenshots need a running deployment to recapture.
+
 ## Status
 
-Claimed and understood; reproduction, plan, and build are sequenced after Contribution 1 and will be recorded here as they happen, with dated Implementation Notes, before the Unit 8 submission.
+Implemented, tested (typecheck clean; jest identical to baseline), documented, and pushed to my fork as branch `scope-stuck-frames-to-show` (commit `bdb3ce02`). The PR itself is deliberately not opened yet: I stopped the opening on 2026-11-09 because I want to test the change myself first. When it opens, the same playbook as Contribution 1 applies, and two upstream gates wait there: OpenCue requires EasyCLA at the first PR, and DCO sign-off on commits (the pushed commit already carries a `Signed-off-by` trailer).
